@@ -5,5 +5,6 @@ app_name="leads"
 
 urlpatterns = [
     path('leads/',views.lead_list,name='list'),
-    path('detail/<int:id>/',views.lead_detail,name='detail')
+    path('detail/<int:id>/',views.lead_detail,name='detail'),
+    path('create/',views.lead_create,name='create')
 ]
