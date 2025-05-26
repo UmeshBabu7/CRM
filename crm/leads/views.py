@@ -56,3 +56,5 @@ def lead_delete(request,id=id):
     return redirect('leads:list')
 
 
+def landing_page(request):
+    return render(request, "landing.html")

@@ -8,5 +8,6 @@ urlpatterns = [
     path('detail/<int:id>/',views.lead_detail,name='detail'),
     path('create/',views.lead_create,name='create'),
     path('update/<int:id>/',views.lead_update,name='update'),
-    path('delete/<int:id>/',views.lead_delete,name='delete')
+    path('delete/<int:id>/',views.lead_delete,name='delete'),
+    path('', views.landing_page, name='landing-page'),
 ]
