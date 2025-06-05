@@ -50,3 +50,10 @@ def lead_update(request,id):
     }
     return render(request,'leads/lead_update.html',context)
 
+
+
+def lead_delete(request,id):
+    lead=Lead.objects.get(id=id)
+    lead.delete()
+    return redirect('leads:lead_list')
+
