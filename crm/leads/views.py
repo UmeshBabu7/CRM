@@ -79,7 +79,7 @@ class leadCreateView(generic.CreateView):
     form_class=LeadModelForm
 
     def get_success_url(self):
-        return reverse("leads:lead_list")
+        return reverse("leads:lead-list")
     
 
 class LeadDetailView(generic.DetailView):
