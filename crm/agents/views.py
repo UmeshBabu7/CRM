@@ -1,14 +1,13 @@
-from django.shortcuts import render
+import random
+
+from django.core.mail import send_mail
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from leads.models import Agent
 from .forms import AgentModelForm
 from .mixins import OrganisorAndLoginRequiredMixin
-import random
-from django.core.mail import send_mail
 
-# Create your views here.
 
 class AgentListView(OrganisorAndLoginRequiredMixin, generic.ListView):
     template_name = "agents/agent_list.html"
@@ -24,7 +23,7 @@ class AgentCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
 
     def get_success_url(self):
         return reverse("agents:agent-list")
-    
+
     def form_valid(self, form):
         user = form.save(commit=False)
         user.is_agent = True
@@ -42,7 +41,7 @@ class AgentCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
             recipient_list=[user.email]
         )
         return super(AgentCreateView, self).form_valid(form)
-    
+
 
 class AgentDetailView(OrganisorAndLoginRequiredMixin, generic.DetailView):
     template_name = "agents/agent_detail.html"
@@ -63,6 +62,7 @@ class AgentUpdateView(OrganisorAndLoginRequiredMixin, generic.UpdateView):
     def get_queryset(self):
         organisation = self.request.user.userprofile
         return Agent.objects.filter(organisation=organisation)
+
 
 class AgentDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
     template_name = "agents/agent_delete.html"
