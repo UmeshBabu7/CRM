@@ -8,64 +8,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
-# def lead_list(request):
-#     leads=Lead.objects.all()
-#     context={
-#         'leads':leads
-#     }
-#     return render(request,'leads/lead_list.html',context)
-
-
-
-# def lead_detail(request,id):
-#     lead=Lead.objects.get(id=id)
-#     context={
-#         'lead':lead
-#     }
-#     return render(request,'leads/lead_detail.html',context)
-
-
-
-# def lead_create(request):
-#     form=LeadModelForm()
-#     if request.method == 'POST':
-#         form=LeadModelForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('leads:lead_list')
-#     context={
-#             'form':form
-#         }
-#     return render(request,'leads/lead_create.html',context)
-
-
-# def lead_update(request,id):
-#     lead=Lead.objects.get(id=id)
-#     form=LeadModelForm(instance=lead)
-#     if request.method == 'POST':
-#         form=LeadModelForm(request.POST, instance=lead)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('leads:lead_list')
-#     context={
-#         'lead':lead,
-#         'form':form
-#     }
-#     return render(request,'leads/lead_update.html',context)
-
-
-
-# def lead_delete(request,id):
-#     lead=Lead.objects.get(id=id)
-#     lead.delete()
-#     return redirect('leads:lead-list')
-
-
-
-# def landing_page(request):
-#     return render(request, "landing.html")
-
-
 class LandingPageView(generic.TemplateView):
     template_name="landing.html"
 
@@ -78,12 +20,31 @@ class LeadListView(LoginRequiredMixin,generic.ListView):
         user = self.request.user
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
-            queryset = Lead.objects.filter(organisation=user.userprofile)
+             queryset = Lead.objects.filter(
+                organisation=user.userprofile, 
+                agent__isnull=False
+            )
         else:
-            queryset = Lead.objects.filter(organisation=user.agent.organisation)
+            queryset = Lead.objects.filter(
+                organisation=user.agent.organisation, 
+                agent__isnull=False
+            )
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super(LeadListView, self).get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(
+                organisation=user.userprofile, 
+                agent__isnull=True
+            )
+            context.update({
+                "unassigned_leads": queryset
+            })
+        return context
 
 
 class leadCreateView(LoginRequiredMixin,generic.CreateView):
